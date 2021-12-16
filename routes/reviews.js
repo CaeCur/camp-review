@@ -1,26 +1,12 @@
 const express = require("express");
 const router = express.Router({ mergeParams: true }); //mergeParams tells express not to seperate the campgorund id param
 const catchAsync = require("../utils/catchAsync");
-const ExpressError = require("../utils/ExpressError");
-const { reviewSchema } = require("../schemas"); //JOI
+const { validateReview } = require("../middleware");
 
 //get the DB models
 const Review = require("../models/Review");
 const Campground = require("../models/Campground");
 //end get the DB models
-
-//Schema Validation
-const validateReview = (req, res, next) => {
-	const { error } = reviewSchema.validate(req.body);
-	if (error) {
-		const msg = error.details.map((el) => el.message).join(",");
-		throw new ExpressError(400, msg);
-	}
-	else {
-		next();
-	}
-};
-//END Schema Validation
 
 //routes
 router.post(
