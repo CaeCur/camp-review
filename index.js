@@ -5,9 +5,12 @@ const session = require("express-session");
 const flash = require("connect-flash");
 const methodOverride = require("method-override");
 const ExpressError = require("./utils/ExpressError");
+const passport = require("passport");
+const localStrategy = require("passport-local");
 //route deps
-const campgrounds = require("./routes/campgrounds");
-const reviews = require("./routes/reviews");
+const campgroundsRoutes = require("./routes/campgrounds");
+const reviewsRoutes = require("./routes/reviews");
+const usersRoutes = require("./routes/users");
 //db deps
 const dbConnect = require("./utils/db");
 
@@ -19,6 +22,7 @@ dbConnect();
 // models
 const Review = require("./models/Review");
 const Campground = require("./models/Campground");
+const User = require("./models/User");
 
 /***** END DATABASE *****/
 
@@ -45,13 +49,19 @@ const sessionConfig = {
 };
 app.use(session(sessionConfig));
 app.use(flash());
+app.use(passport.initialize()); //tell passport to initialise
+app.use(passport.session()); //tell passport to use our session
+passport.use(new localStrategy(User.authenticate())); //tell passport to use the local strategy on which model
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 /***** END EXPRESS CONFIG *****/
 
 /***** MIDDLEWARE *****/
 
-//flash
+//sitewide variables - flash,passport user
 app.use((req, res, next) => {
+	res.locals.currentUser = req.user;
 	res.locals.success = req.flash("success");
 	res.locals.error = req.flash("error");
 	next();
@@ -65,8 +75,9 @@ app.get("/", (req, res) => {
 	res.render("home");
 });
 
-app.use("/campgrounds", campgrounds);
-app.use("/campgrounds/:id/reviews", reviews);
+app.use("/campgrounds", campgroundsRoutes);
+app.use("/campgrounds/:id/reviews", reviewsRoutes);
+app.use("/", usersRoutes);
 
 /***** END ROUTES *****/
 
