@@ -1,4 +1,5 @@
 const Campground = require("./models/Campground");
+const Review = require("./models/Review");
 const ExpressError = require("./utils/ExpressError");
 const { reviewSchema } = require("./schemas"); //JOI
 
@@ -30,4 +31,14 @@ module.exports.validateReview = (req, res, next) => {
 	else {
 		next();
 	}
+};
+
+module.exports.isReviewAuthor = async (req, res, next) => {
+	const { id, reviewId } = req.params;
+	const review = await Review.findById(reviewId);
+	if (!review.author.equals(req.user._id)) {
+		req.flash("error", "You are not the owner of this review");
+		return res.redirect(`/campgrounds/${id}`);
+	}
+	next();
 };
