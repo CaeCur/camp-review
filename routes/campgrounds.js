@@ -2,6 +2,8 @@
 This route file will not be refactored to the best effort so that it displays
 an alternate unfactored solution to a clean routes file.
 See one of the other route files for a display of properly factored files.
+
+See users routes to see the router.route solution to routes refactoring
 */
 const express = require("express");
 const router = express.Router();
@@ -31,21 +33,21 @@ const validateCampground = (req, res, next) => {
 //campgrounds routes
 router.get("/", catchAsync(Campgrounds.index));
 
-router.get("/new", isLoggedIn, Campgrounds.getCreateForm);
-
 router.post("/", isLoggedIn, validateCampground, catchAsync(Campgrounds.postCreateForm));
+
+router.get("/new", isLoggedIn, Campgrounds.getCreateForm);
 
 /***********
 Remember to place the variable route last,
 otherwise anything after will be treated as an ID
 ***********/
-router.get("/:id", catchAsync(Campgrounds.getCampground));
+router
+	.route("/:id")
+	.get(catchAsync(Campgrounds.getCampground))
+	.put(isLoggedIn, isAuthor, validateCampground, catchAsync(Campgrounds.putUpdateCampground))
+	.delete(isLoggedIn, isAuthor, catchAsync(Campgrounds.deleteCampground));
 
 router.get("/:id/edit", isLoggedIn, isAuthor, catchAsync(Campgrounds.getUpdateCampground));
-
-router.put("/:id", isLoggedIn, isAuthor, validateCampground, catchAsync(Campgrounds.putUpdateCampground));
-
-router.delete("/:id", isLoggedIn, isAuthor, catchAsync(Campgrounds.deleteCampground));
 
 //END campgrounds routes
 

@@ -9,17 +9,12 @@ const ExpressError = require("../utils/ExpressError");
 const User = require("../models/User");
 //END get the db models
 
-router.get("/register", Users.getRegister);
+router.route("/register").get(Users.getRegister).post(catchAsync(Users.postRegister));
 
-router.post("/register", catchAsync(Users.postRegister));
-
-router.get("/login", Users.getLogin);
-
-router.post(
-	"/login",
-	passport.authenticate("local", { failureFlash: true, failureRedirect: "/login" }),
-	Users.postLogin
-);
+router
+	.route("/login")
+	.get(Users.getLogin)
+	.post(passport.authenticate("local", { failureFlash: true, failureRedirect: "/login" }), Users.postLogin);
 
 router.get("/logout", Users.getLogout);
 
