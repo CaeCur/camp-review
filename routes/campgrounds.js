@@ -10,6 +10,9 @@ const router = express.Router();
 const Campgrounds = require("../controllers/Campgrounds");
 const catchAsync = require("../utils/catchAsync");
 const ExpressError = require("../utils/ExpressError");
+const multer = require("multer");
+const { storage } = require("../cloudinary");
+const upload = multer({ storage });
 const { isLoggedIn, isAuthor } = require("../middleware");
 const { campgroundSchema } = require("../schemas"); //JOI offers validation for API based requests
 
@@ -33,7 +36,7 @@ const validateCampground = (req, res, next) => {
 //campgrounds routes
 router.get("/", catchAsync(Campgrounds.index));
 
-router.post("/", isLoggedIn, validateCampground, catchAsync(Campgrounds.postCreateForm));
+router.post("/", isLoggedIn, upload.array("image"), validateCampground, catchAsync(Campgrounds.postCreateForm));
 
 router.get("/new", isLoggedIn, Campgrounds.getCreateForm);
 
