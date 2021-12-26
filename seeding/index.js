@@ -29,9 +29,8 @@ const seedDb = async () => {
 			title       : `${randCamp(descriptors)} ${randCamp(places)}`,
 			images      : [
 				{
-					url      :
-						"https://res.cloudinary.com/dv5vm4sqh/image/upload/v1640349876/CampFire/ewuwy31ap9tiocp3hg30.jpg",
-					filename : "CampFire/ewuwy31ap9tiocp3hg30"
+					url      : "https://res.cloudinary.com/dv5vm4sqh/image/upload/v1640544062/table-mount_woarjf.jpg",
+					filename : "CampFire/table-mount_woarjf"
 				}
 			],
 			description :
