@@ -36,7 +36,13 @@ const validateCampground = (req, res, next) => {
 //campgrounds routes
 router.get("/", catchAsync(Campgrounds.index));
 
-router.post("/", isLoggedIn, upload.array("image"), validateCampground, catchAsync(Campgrounds.postCreateForm));
+router.post(
+	"/",
+	isLoggedIn,
+	upload.array("campground[image]"),
+	validateCampground,
+	catchAsync(Campgrounds.postCreateForm)
+);
 
 router.get("/new", isLoggedIn, Campgrounds.getCreateForm);
 
@@ -47,7 +53,13 @@ otherwise anything after will be treated as an ID
 router
 	.route("/:id")
 	.get(catchAsync(Campgrounds.getCampground))
-	.put(isLoggedIn, isAuthor, validateCampground, catchAsync(Campgrounds.putUpdateCampground))
+	.put(
+		isLoggedIn,
+		isAuthor,
+		upload.array("campground[image]"),
+		validateCampground,
+		catchAsync(Campgrounds.putUpdateCampground)
+	)
 	.delete(isLoggedIn, isAuthor, catchAsync(Campgrounds.deleteCampground));
 
 router.get("/:id/edit", isLoggedIn, isAuthor, catchAsync(Campgrounds.getUpdateCampground));
