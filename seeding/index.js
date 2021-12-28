@@ -26,8 +26,17 @@ const seedDb = async () => {
 
 		const camp = new Campground({
 			location    : `${cities[rand67].city}, ${cities[rand67].admin_name}`,
+			geometry    : {
+				type        : "Point",
+				coordinates : [ -4.225739, 57.47901239999998 ]
+			},
 			title       : `${randCamp(descriptors)} ${randCamp(places)}`,
-			image       : "https://source.unsplash.com/collection/1273441",
+			images      : [
+				{
+					url      : "https://res.cloudinary.com/dv5vm4sqh/image/upload/v1640544062/table-mount_woarjf.jpg",
+					filename : "CampFire/table-mount_woarjf"
+				}
+			],
 			description :
 				"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis pretium urna at bibendum finibus. Morbi pretium non odio eget bibendum. Nunc dui arcu, aliquam consequat tempus a, volutpat ac lorem. Nullam semper orci id venenatis viverra. Vestibulum et gravida purus. Quisque hendrerit sollicitudin sapien vitae molestie.",
 			price,

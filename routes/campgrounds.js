@@ -10,6 +10,9 @@ const router = express.Router();
 const Campgrounds = require("../controllers/Campgrounds");
 const catchAsync = require("../utils/catchAsync");
 const ExpressError = require("../utils/ExpressError");
+const multer = require("multer");
+const { storage } = require("../cloudinary");
+const upload = multer({ storage });
 const { isLoggedIn, isAuthor } = require("../middleware");
 const { campgroundSchema } = require("../schemas"); //JOI offers validation for API based requests
 
@@ -33,7 +36,13 @@ const validateCampground = (req, res, next) => {
 //campgrounds routes
 router.get("/", catchAsync(Campgrounds.index));
 
-router.post("/", isLoggedIn, validateCampground, catchAsync(Campgrounds.postCreateForm));
+router.post(
+	"/",
+	isLoggedIn,
+	upload.array("campground[image]"),
+	validateCampground,
+	catchAsync(Campgrounds.postCreateForm)
+);
 
 router.get("/new", isLoggedIn, Campgrounds.getCreateForm);
 
@@ -44,7 +53,13 @@ otherwise anything after will be treated as an ID
 router
 	.route("/:id")
 	.get(catchAsync(Campgrounds.getCampground))
-	.put(isLoggedIn, isAuthor, validateCampground, catchAsync(Campgrounds.putUpdateCampground))
+	.put(
+		isLoggedIn,
+		isAuthor,
+		upload.array("campground[image]"),
+		validateCampground,
+		catchAsync(Campgrounds.putUpdateCampground)
+	)
 	.delete(isLoggedIn, isAuthor, catchAsync(Campgrounds.deleteCampground));
 
 router.get("/:id/edit", isLoggedIn, isAuthor, catchAsync(Campgrounds.getUpdateCampground));

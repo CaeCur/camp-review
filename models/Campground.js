@@ -2,12 +2,36 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Review = require("./Review");
 
+/*
+Let's use a mongo virtual property to inject a small width into our cloudinary
+request so that it returns a thumbnail sized picture
+*/
+const imageSchema = new Schema({
+	url      : String,
+	filename : String
+});
+
+imageSchema.virtual("thumbnail").get(function () {
+	return this.url.replace("/upload", "/upload/w_200");
+});
+
 const campgroundSchema = new Schema({
 	title       : String,
-	image       : String,
+	images      : [ imageSchema ],
 	price       : Number,
 	description : String,
 	location    : String,
+	geometry    : {
+		type        : {
+			type     : String,
+			enum     : [ "Point" ],
+			required : true
+		},
+		coordinates : {
+			type     : [ Number ],
+			required : true
+		}
+	},
 	reviews     : [
 		{
 			type : Schema.Types.ObjectId,
