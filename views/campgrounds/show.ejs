@@ -4,8 +4,6 @@
 <div class="row">
   <div class="col-6">
 
-    <div id='map' style='width: 400px; height: 300px;'></div>
-
     <div id="campgroundCarousel" class="carousel slide" data-bs-ride="carousel">
       <div class="carousel-inner">
         <% if (campground.images.length){ campground.images.forEach((img,i)=>{ %>
@@ -15,7 +13,8 @@
         <% }) %>
         <% }else{ %>
         <div class="carousel-item-0" active>
-          <img src="https://res.cloudinary.com/dv5vm4sqh/image/upload/v1640714663/CampFire/campfire_u9acgd.png" class="d-block w-100" alt="">
+          <img src="https://res.cloudinary.com/dv5vm4sqh/image/upload/v1640714663/CampFire/campfire_u9acgd.png"
+              class="d-block w-100" alt="">
         </div>
         <% } %>
 
@@ -66,8 +65,12 @@
 
   </div>
   <div class="col-6">
+
+    <div id='map'></div>
+
+    <h2>Reviews</h2>
+
     <% if(currentUser){ %>
-    <h2>Leave a Review</h2>
     <form action="/campgrounds/<%=campground._id%>/reviews" method="POST" class="mb-3 validated-form" novalidate>
       <div class="mb-3">
         <fieldset class="starability-basic">
@@ -97,7 +100,6 @@
     </form>
     <% } %>
     <% if (campground.reviews.length){ %>
-    <h2>Reviews</h2>
     <% for(let review of campground.reviews) { %>
     <div class="card mb-3 ">
       <div class="card-body">

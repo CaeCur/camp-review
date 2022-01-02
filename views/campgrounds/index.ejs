@@ -1,8 +1,6 @@
 <% layout('layouts/boilerplate') %>
 
-<div id="map" style="width:100%; height:500px">
-
-</div>
+<div id="cluster-map"></div>
 
 <h1>Available Campgrounds</h1>
 <a href="/campgrounds/new">Create a New Campground</a>
@@ -14,7 +12,8 @@
       <% if (campground.images.length){ %>
       <img src="<%= campground.images[0].url %> " class="img-fluid" alt="">
       <% }else{ %>
-      <img src="https://res.cloudinary.com/dv5vm4sqh/image/upload/v1640714663/CampFire/campfire_u9acgd.png" class="img-fluid" alt="">
+      <img src="https://res.cloudinary.com/dv5vm4sqh/image/upload/v1640714663/CampFire/campfire_u9acgd.png"
+          class="img-fluid" alt="">
       <% } %>
 
     </div>
