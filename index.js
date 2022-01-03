@@ -11,6 +11,7 @@ const methodOverride = require("method-override");
 const ExpressError = require("./utils/ExpressError");
 const passport = require("passport");
 const localStrategy = require("passport-local");
+const mongoSanitize = require("express-mongo-sanitize");
 //route deps
 const campgroundsRoutes = require("./routes/campgrounds");
 const reviewsRoutes = require("./routes/reviews");
@@ -40,17 +41,22 @@ app.set("views", path.join(__dirname, "views"));
 //ensure that the body is parsed REVIEW THIS
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
+app.use(mongoSanitize());
 app.use(express.static(path.join(__dirname, "public"))); //this tells express to serve our static folder
+
 const sessionConfig = {
+	name              : "CampFireSession",
 	secret            : "secret",
 	resave            : false,
 	saveUninitialized : true,
 	cookie            : {
 		httpOnly : true,
+		// secure   : true, //this value ensures data transfer over HTTPS. Enable for production.
 		expires  : Date.now() + 1000 * 60 * 60 * 24 * 7, //this crazy set of numbers is just adding 7 days onto today
 		maxAge   : 1000 * 60 * 60 * 24 * 7
 	}
 };
+
 app.use(session(sessionConfig));
 app.use(flash());
 app.use(passport.initialize()); //tell passport to initialise
