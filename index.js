@@ -23,6 +23,7 @@ const usersRoutes = require("./routes/users");
 const dbConnect = require("./utils/db");
 
 /***** DATABASE *****/
+const dbUrl = process.env.DB_URL;
 
 // connection
 dbConnect();
@@ -48,8 +49,19 @@ app.use(favicon(path.join(__dirname, "favicon.ico")));
 app.use(express.static(path.join(__dirname, "public"))); //this tells express to serve our static folder
 app.use(mongoSanitize());
 
+const store = MongoStore.create({
+	mongoUrl   : dbUrl,
+	secret     : "secret",
+	touchAfter : 24 * 60 * 60
+});
+
+store.on("error", function (e) {
+	console.log("Session store error", e);
+});
+
 const sessionConfig = {
 	name              : "CampFireSession",
+	store,
 	secret            : "secret",
 	resave            : false,
 	saveUninitialized : true,
