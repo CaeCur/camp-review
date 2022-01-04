@@ -3,6 +3,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 const express = require("express");
+const favicon = require("serve-favicon");
 const path = require("path");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
@@ -11,6 +12,8 @@ const methodOverride = require("method-override");
 const ExpressError = require("./utils/ExpressError");
 const passport = require("passport");
 const localStrategy = require("passport-local");
+const mongoSanitize = require("express-mongo-sanitize");
+const helmet = require("helmet");
 //route deps
 const campgroundsRoutes = require("./routes/campgrounds");
 const reviewsRoutes = require("./routes/reviews");
@@ -40,19 +43,77 @@ app.set("views", path.join(__dirname, "views"));
 //ensure that the body is parsed REVIEW THIS
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
+app.use(favicon(path.join(__dirname, "favicon.ico")));
 app.use(express.static(path.join(__dirname, "public"))); //this tells express to serve our static folder
+app.use(mongoSanitize());
+
 const sessionConfig = {
+	name              : "CampFireSession",
 	secret            : "secret",
 	resave            : false,
 	saveUninitialized : true,
 	cookie            : {
 		httpOnly : true,
+		// secure   : true, //this value ensures data transfer over HTTPS. Enable for production.
 		expires  : Date.now() + 1000 * 60 * 60 * 24 * 7, //this crazy set of numbers is just adding 7 days onto today
 		maxAge   : 1000 * 60 * 60 * 24 * 7
+		// sameSite : "lax"
 	}
 };
+
 app.use(session(sessionConfig));
 app.use(flash());
+// app.use(helmet());
+
+const scriptSrcUrls = [
+	"https://stackpath.bootstrapcdn.com/",
+	"https://api.mapbox.com",
+	"https://kit.fontawesome.com/",
+	"https://cdnjs.cloudflare.com/",
+	"https://cdn.jsdelivr.net/",
+	"https://res.cloudinary.com/dv5vm4sqh/"
+];
+const styleSrcUrls = [
+	"https://kit-free.fontawesome.com/",
+	"https://stackpath.bootstrapcdn.com/",
+	"https://api.mapbox.com/",
+	"https://api.tiles.mapbox.com/",
+	"https://fonts.googleapis.com/",
+	"https://use.fontawesome.com/",
+	"https://cdn.jsdelivr.net/",
+	"https://res.cloudinary.com/dv5vm4sqh/"
+];
+const connectSrcUrls = [
+	"https://*.tiles.mapbox.com",
+	"https://api.mapbox.com",
+	"https://events.mapbox.com",
+	"https://res.cloudinary.com/dv5vm4sqh/"
+];
+const fontSrcUrls = [ "https://res.cloudinary.com/dv5vm4sqh/" ];
+
+app.use(
+	helmet.contentSecurityPolicy({
+		directives : {
+			defaultSrc : [],
+			connectSrc : [ "'self'", ...connectSrcUrls ],
+			scriptSrc  : [ "'unsafe-inline'", "'self'", ...scriptSrcUrls ],
+			styleSrc   : [ "'self'", "'unsafe-inline'", ...styleSrcUrls ],
+			workerSrc  : [ "'self'", "blob:" ],
+			objectSrc  : [],
+			imgSrc     : [
+				"'self'",
+				"blob:",
+				"data:",
+				"https://res.cloudinary.com/dv5vm4sqh/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT!
+				"https://images.unsplash.com/"
+			],
+			fontSrc    : [ "'self'", ...fontSrcUrls ],
+			mediaSrc   : [ "https://res.cloudinary.com/dv5vm4sqh/" ],
+			childSrc   : [ "blob:" ]
+		}
+	})
+);
+
 app.use(passport.initialize()); //tell passport to initialise
 app.use(passport.session()); //tell passport to use our session
 passport.use(new localStrategy(User.authenticate())); //tell passport to use the local strategy on which model
