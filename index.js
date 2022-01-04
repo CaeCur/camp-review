@@ -3,6 +3,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 const express = require("express");
+const favicon = require("serve-favicon");
 const path = require("path");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
@@ -42,6 +43,7 @@ app.set("views", path.join(__dirname, "views"));
 //ensure that the body is parsed REVIEW THIS
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
+app.use(favicon(path.join(__dirname, "favicon.ico")));
 app.use(express.static(path.join(__dirname, "public"))); //this tells express to serve our static folder
 app.use(mongoSanitize());
 
