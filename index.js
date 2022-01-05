@@ -23,7 +23,7 @@ const usersRoutes = require("./routes/users");
 const dbConnect = require("./utils/db");
 
 /***** DATABASE *****/
-const dbUrl = process.env.DB_URL;
+const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/yelp-camp";
 
 // connection
 dbConnect();
@@ -36,7 +36,7 @@ const User = require("./models/User");
 /***** END DATABASE *****/
 
 /***** EXPRESS CONFIG *****/
-
+const secret = process.env.SECRET || "secret";
 const app = express();
 
 app.engine("ejs", ejsMate);
@@ -51,7 +51,7 @@ app.use(mongoSanitize());
 
 const store = MongoStore.create({
 	mongoUrl   : dbUrl,
-	secret     : "secret",
+	secret,
 	touchAfter : 24 * 60 * 60
 });
 
@@ -62,7 +62,7 @@ store.on("error", function (e) {
 const sessionConfig = {
 	name              : "CampFireSession",
 	store,
-	secret            : "secret",
+	secret,
 	resave            : false,
 	saveUninitialized : true,
 	cookie            : {
