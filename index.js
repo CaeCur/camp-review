@@ -23,6 +23,7 @@ const usersRoutes = require("./routes/users");
 const dbConnect = require("./utils/db");
 
 /***** DATABASE *****/
+const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/yelp-camp";
 
 // connection
 dbConnect();
@@ -35,7 +36,7 @@ const User = require("./models/User");
 /***** END DATABASE *****/
 
 /***** EXPRESS CONFIG *****/
-
+const secret = process.env.SECRET || "secretPeach";
 const app = express();
 
 app.engine("ejs", ejsMate);
@@ -48,9 +49,20 @@ app.use(favicon(path.join(__dirname, "favicon.ico")));
 app.use(express.static(path.join(__dirname, "public"))); //this tells express to serve our static folder
 app.use(mongoSanitize());
 
+const store = MongoStore.create({
+	mongoUrl   : dbUrl,
+	secret,
+	touchAfter : 24 * 60 * 60
+});
+
+store.on("error", function (e) {
+	console.log("Session store error", e);
+});
+
 const sessionConfig = {
 	name              : "CampFireSession",
-	secret            : "secret",
+	store,
+	secret,
 	resave            : false,
 	saveUninitialized : true,
 	cookie            : {
@@ -161,6 +173,7 @@ app.use((err, req, res, next) => {
 
 /***** END ERROR HANDLING *****/
 
-app.listen(3000, () => {
-	console.log("serving on port 3000");
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+	console.log(`serving on port ${port}`);
 });
