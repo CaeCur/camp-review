@@ -36,7 +36,7 @@ const User = require("./models/User");
 /***** END DATABASE *****/
 
 /***** EXPRESS CONFIG *****/
-const secret = process.env.SECRET || "secret";
+const secret = process.env.SECRET || "secretPeach";
 const app = express();
 
 app.engine("ejs", ejsMate);
