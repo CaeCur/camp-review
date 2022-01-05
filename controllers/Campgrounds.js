@@ -1,3 +1,4 @@
+//file rename
 const Campground = require("../models/Campground");
 const { cloudinary } = require("../cloudinary");
 //Mapbox
