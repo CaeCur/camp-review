@@ -9,7 +9,7 @@ Express/Node app that exhibits full stack development. Campfire is built with th
 - HTML/CSS
 
 # Hosted test version
-A test version of the app is hosted at: https://caelan-campfire.herokuapp.com/
+A test version of the app is hosted at: https://campfire-sigma.vercel.app/
 
 # Running locally
 1. Clone the repo
